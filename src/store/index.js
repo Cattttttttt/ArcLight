@@ -12,23 +12,24 @@ Vue.use(Vuex)
 
 const APP_NAME = 'arclight-app'
 
-// const ar = Arweave.init({
-//   host: 'arweave.arcucy.io',
-//   port: 443,
-//   protocol: 'https',
-//   timeout: 10000,
-//   logging: false
-// })
 const ar = Arweave.init({
-  host: 'arweave.net',
+  host: 'arweave.arcucy.io',
   port: 443,
   protocol: 'https',
   timeout: 10000,
   logging: false
 })
+// const ar = Arweave.init({
+//   host: 'arweave.net',
+//   port: 443,
+//   protocol: 'https',
+//   timeout: 10000,
+//   logging: false
+// })
 
 export default new Vuex.Store({
-  modules: {},
+  modules: {
+  },
   state: {
     appLang: 'en-US',
     isLoggedIn: false,
@@ -87,22 +88,9 @@ export default new Vuex.Store({
     paymentId: '',
     playList: [],
     playIndex: 0,
-    audioFileCache: null,
-    preferredCurrency: 'USD',
-    alwaysUseAr: false,
-    arToUSD: '',
-    USDToPreferredCurrency: ''
+    audioFileCache: null
   },
   mutations: {
-    // currency: string
-    setPreferredCurrency (state, currency) {
-      state.preferredCurrency = currency
-      this.dispatch('updateExchangeRate', currency)
-    },
-    // val: boolean
-    setAlwaysUseAr (state, val) {
-      state.alwaysUseAr = val
-    },
     setAppLang (state, lang) {
       state.appLang = lang
     },
@@ -298,13 +286,8 @@ export default new Vuex.Store({
         ...audioData,
         fileId
       }
-    },
-    setArToUsd (state, price) {
-      state.arToUSD = price
-    },
-    setUsdToPreferredCurrency (state, price) {
-      state.USDToPreferredCurrency = price
     }
+
   },
   getters: {
     playingAudio (state) {
@@ -323,18 +306,6 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    updateExchangeRate ({ commit }, currency) {
-      API.priceGetter.getPrice('AR').then((res) => {
-        commit('setArToUsd', res.price)
-      })
-      API.converter.convert({
-        from: 'USD',
-        to: currency,
-        amount: 1
-      }).then((res) => {
-        commit('setUsdToPreferredCurrency', res.result)
-      })
-    },
     setKey ({ commit }, data) {
       return new Promise(async (resolve, reject) => {
         commit('setKeyFile', data.file)
